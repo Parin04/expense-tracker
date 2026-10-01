@@ -17,6 +17,9 @@ services:
       - POSTGRES_USER=expense
       - POSTGRES_PASSWORD=expense
       - POSTGRES_DB=expense
+    # เปิดไว้ให้ต่อจาก DB client ในเครื่อง (5432 ใช้กับโปรเจกต์ test แล้ว)
+    ports:
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
