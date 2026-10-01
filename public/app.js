@@ -42,12 +42,20 @@ function emojiFor(type, category) {
   return (CATEGORIES[type].find((c) => c.name === category) || { emoji: "📦" }).emoji;
 }
 
+class OfflineError extends Error {}
+
 async function api(method, url, body) {
-  const res = await fetch(url, {
-    method,
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method,
+      headers: body ? { "Content-Type": "application/json" } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    // fetch โยน error เฉพาะตอนต่อ network ไม่ได้ (navigator.onLine เชื่อถือไม่ได้)
+    throw new OfflineError("offline");
+  }
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || `HTTP ${res.status}`);
@@ -56,7 +64,12 @@ async function api(method, url, body) {
 }
 
 function showError(err) {
-  $("error").textContent = err ? `เกิดข้อผิดพลาด: ${err.message}` : "";
+  const msg = !err
+    ? ""
+    : err instanceof OfflineError
+      ? "ออฟไลน์อยู่ ต่ออินเทอร์เน็ตแล้วลองใหม่"
+      : `เกิดข้อผิดพลาด: ${err.message}`;
+  $("error").textContent = msg;
   $("error").hidden = !err;
 }
 
@@ -230,3 +243,13 @@ $("next-month").addEventListener("click", () => {
 $("date").value = toDate(new Date());
 renderCategories();
 load().catch(showError);
+
+// กลับมาออนไลน์ให้โหลดข้อมูลใหม่
+window.addEventListener("online", () => {
+  showError(null);
+  load().catch(showError);
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch((err) => console.warn("SW register failed:", err));
+}
