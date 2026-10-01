@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f6f5c">
+  <title>บันทึกรายรับรายจ่าย</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main>
+    <header class="top">
+      <button id="prev-month" class="icon-btn" aria-label="เดือนก่อนหน้า">‹</button>
+      <h1 id="month-label"></h1>
+      <button id="next-month" class="icon-btn" aria-label="เดือนถัดไป">›</button>
+    </header>
+
+    <section class="summary">
+      <div class="stat">
+        <span class="label">รายรับ</span>
+        <span id="sum-income" class="value income">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">รายจ่าย</span>
+        <span id="sum-expense" class="value expense">0</span>
+      </div>
+      <div class="stat">
+        <span class="label">คงเหลือ</span>
+        <span id="sum-balance" class="value">0</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <form id="tx-form">
+        <div class="type-toggle" role="radiogroup" aria-label="ประเภท">
+          <button type="button" data-type="expense" class="active">รายจ่าย</button>
+          <button type="button" data-type="income">รายรับ</button>
+        </div>
+
+        <label class="amount">
+          <span>฿</span>
+          <input id="amount" type="number" inputmode="decimal" step="0.01" min="0.01" placeholder="0.00" required>
+        </label>
+
+        <div id="categories" class="chips" role="radiogroup" aria-label="หมวดหมู่"></div>
+
+        <div class="row">
+          <input id="note" type="text" maxlength="200" placeholder="บันทึกช่วยจำ (ไม่บังคับ)" autocomplete="off">
+          <input id="date" type="date" required>
+        </div>
+
+        <button type="submit" class="primary">บันทึก</button>
+        <p id="error" class="error" hidden></p>
+      </form>
+    </section>
+
+    <section class="card" id="breakdown-card" hidden>
+      <h2>รายจ่ายตามหมวด</h2>
+      <ul id="breakdown" class="breakdown"></ul>
+    </section>
+
+    <section class="card">
+      <h2>รายการ</h2>
+      <div id="list"></div>
+      <p id="empty" class="empty" hidden>ยังไม่มีรายการในเดือนนี้</p>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
